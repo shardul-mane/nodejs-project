@@ -4,8 +4,8 @@ const app = express();
 const User = require('./model/user.model');
 const Category = require('./model/category.model');
 const bodyParser = require('body-parser');
-const { getalluser, adduser, deleteuser ,updateuser,getusersfullnameandrole,getuserbyid,bulkcreateusers,modelqueryexample} = require('./controller/user.controller');
-const { bulkcreatecatgory,getallcategory} = require('./controller/category.controller');
+const { oneToone,getalluser, adduser, deleteuser ,updateuser,getusersfullnameandrole,getuserbyid,bulkcreateusers,modelqueryexample} = require('./controller/user.controller');
+const { bulkcreatecatgory,getallcategory,getcategorybyid,addcategory,deletecategory} = require('./controller/category.controller');
 // const dotenv= require('dotenv');
 // dotenv.config();
 app.use(bodyParser.json());
@@ -14,26 +14,24 @@ const temp = process.env.DATABASE_NAME;
 console.log("the database name in index.js is :",temp);
 
 
-
-
-
-
-
-
-
 app.get('/', function (req,res){
    res.send("hi from  vdsmv server ")
 });
+
 app.get('/p', function (req,res){
    res.send("hi pp")
 });
 
 
-
 //  get all users
 app.get('/getalluser', getalluser);
 
-app.get('/mp', modelqueryexample);
+//test api for model query example
+
+app.get('/model', modelqueryexample);
+
+// get user by id
+app.get('/:id',getuserbyid);
 
 // app.('/adduser',adduser);
 app.post('/adduser', adduser);
@@ -48,24 +46,28 @@ app.patch('/updateuser/:id',updateuser)
 app.get('/getuserandrole',getusersfullnameandrole);
 
 // get user by id
-app.get('/:id',getuserbyid);
+app.get('/getuserbyid/:id',getuserbyid);
+
+// Category all API HERE 
+
+//add category
+app.post('/addcategory',addcategory);
+
+// get category by id
+app.get('/getcategorybyid/:id',getcategorybyid);
 
 //creates catgory in bulk by giveing in array 
-app.post('/createcategoryinbulk',bulkcreatecatgory);
+// app.post('/createcategoryinbulk',bulkcreatecatgory)
 
 // get all category
 app.get('/getallcategory',getallcategory);
 
 
+//delete category
+app.delete('/deletecategory/:id',deletecategory);
 
-//node mon not working
-// env file not taking data for connection establishtion
-//some api not working as expected whole process is right still 
-
-
-
-
-
+// working on one to one association between user and category
+app.get('/userwithcategory/:id',oneToone);
 
 
 

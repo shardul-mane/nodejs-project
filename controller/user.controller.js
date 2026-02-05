@@ -3,10 +3,49 @@ const User =  require('../model/user.model');
 const { Op } = require("sequelize");
 
 const getalluser= async (req, res)=>{
+    console.log("get all users called")
     const allusers = await User.findAll();
+    console.log("all users are :", allusers);
     // console.log("all users are :", allusers);
     res.send(allusers);
 }
+
+
+const getusersfullnameandrole =async (req,res)=>{
+    const users = await User.findAll({
+        // attributes:['fullname','role']
+        where: {
+    // id: [1, 2, 3], // Same as using `id: { [Op.in]: [1,2,3] }`
+
+    id : {[Op.in]:[23,14,7]}
+  },
+    })
+    res.send(users)
+}
+
+const getuserbyid= async (req,res)=>{
+    console.log("get user by id api called with id :",req.params.id);
+    if(!req.params.id){
+        return res.status(400).send({response:"missing user id in params"})
+    }
+    const user = await User.findOne({
+        where:{
+            id:req.params.id
+        }
+    });
+    console.log("#####################################")
+
+    console.log("user", user)
+
+    console.log("#####################################")
+
+    res.send(user);
+}
+
+
+
+//  controller to add user in database
+
 const adduser= async (req,res)=>{
 
     // here we add destructuring from body and check all fileds should be there 
@@ -17,7 +56,7 @@ const adduser= async (req,res)=>{
     //     return res.status(400).send({response:"missing user data"});
     // }
 
-    const newuser = await User.create(userdata);
+   const newuser = await User.create(userdata);
     console.log("the new user created is :",newuser);
 
     res.status(201).send({response:"user created successfully"});
@@ -50,35 +89,12 @@ const deleteuser= async(req,res)=>{
 }
 
 
-const getusersfullnameandrole =async (req,res)=>{
-    const users = await User.findAll({
-        // attributes:['fullname','role']
-        where: {
-    // id: [1, 2, 3], // Same as using `id: { [Op.in]: [1,2,3] }`
-
-    id : {[Op.in]:[23,14,7]}
-  },
-    })
-    res.send(users)
-}
-
-const getuserbyid= async (req,res)=>{
-    if(!req.params.id){
-        return res.status(400).send({response:"missing user id in params"})
-    }
-    const user = await User.findOne({
-        where:{
-            id:req.params.id
-        }
-    });
-    res.send(user);
-}
 
 // Specifying attributes for SELECT queries
 
  const modelqueryexample = async (req,res)=>{
-    console.log("first")
-    res.send("model query example route");
+    console.log("model query example route called");
+    res.send("model query example route ww");
 }
 
 
@@ -92,6 +108,16 @@ const bulkcreateusers= async (req,res)=>{
 }
 
 
+// working on this api  i have to add  relation in database one to one 
+ const oneToone = async (req,res)=>{
+    const {id} = req.params;
+    const userwithcategory = await User.findByPk(id,{include:Category});
+    if(!userwithcategory){
+        return res.status(404).send({response:"user not found"});
+    }
+    res.send(userwithcategory);
+ };
+
     
 
 module.exports = {
@@ -102,7 +128,8 @@ module.exports = {
     updateuser,
     getusersfullnameandrole,
     bulkcreateusers,
-    modelqueryexample
+    modelqueryexample,
+    oneToone
   
 
 };

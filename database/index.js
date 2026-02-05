@@ -11,32 +11,33 @@ const { Sequelize} = require('sequelize');
 
 
 
-const sequelize = new Sequelize(process.env.DATABASE_NAME,process.env.DATABASE_USER,process.env.DATABASE_PASSWORD,{
-    host:process.env.localhost,
-    dialect:'mysql'
-});
-const temp = process.env.DATABASE_NAME;
-console.log("the database name is :",temp);
-
-// const sequelize = new Sequelize('dbname','user','password',{
-//     host:'localhost',
-//     dialect:'mysql',
-//     logging:false,
+// const sequelize = new Sequelize(process.env.DATABASE_NAME,process.env.DATABASE_USER,process.env.DATABASE_PASSWORD,{
+//     host:process.env.localhost,
+//     dialect:'mysql'
 // });
+// const temp = process.env.DATABASE_NAME;
+// console.log("the database name is :",temp);
+
+const sequelize = new Sequelize('database','user','acc@password',{
+    host:'localhost',
+    dialect:'mysql',
+    logging:false,
+});
 
 
-// async function connection(){
+async function connection(){
 try {
 
-     sequelize.authenticate();
+      await sequelize.authenticate();
+    //  console.log(result)
     console.log("database is connected successfully")
     
 } catch (error) {
     console.log("the error is :",error)
     
 }
-// }
-// connection();
+}
+connection();
 
 
 module.exports = sequelize;

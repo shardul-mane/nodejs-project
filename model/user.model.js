@@ -9,7 +9,7 @@
 //     fullname:{
 //         type: DataTypes.STRING,
 //         allowNull:false,
-        
+
 //     },
 //     email:{
 //         type: DataTypes.STRING,
@@ -41,37 +41,56 @@ const sequelize = require('../database/index.js');
 const User = sequelize.define(
   'User',
   {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     // Model attributes are defined here
     fullname: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(),
       allowNull: false,
+      // example of getter method
+      get() {
+        const rawValue = this.getDataValue('fullname');
+        return rawValue ? rawValue.toUpperCase() : null;
+      },
     },
     email: {
       type: DataTypes.STRING,
+      validate: {
+        isEmail: true,
+      }
+
       // allowNull defaults to true
     },
-     phonenumber: {
+    phonenumber: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     location: {
-        type:DataTypes.STRING,
-        allowNull:false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-     role: {
-        type:DataTypes.STRING,
-       defaultValue:'user',
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: 'user',
     },
+
   },
   {
-    // Other model options go here
+    paranoid: true,
+
+    // If you want to give a custom name to the deletedAt column
+    deletedAt: 'destroyTime',
+    // // Other model options go here
     tableName: 'users_table',
   },
 );
-User.sync().then(()=>{
-    console.log("users_table table created successfully")
-}).catch((err)=>{
-    console.log("the error is :",err)
+User.sync().then(() => {
+  console.log("users_table table created successfully")
+}).catch((err) => {
+  console.log("the error is :", err)
 });
 
 module.exports = User;
