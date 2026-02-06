@@ -1,4 +1,6 @@
-const { response } = require('express');
+// const { response } = require('express');
+const Category = require('../model/category.model');
+const Contact = require('../model/contact.model');
 const User =  require('../model/user.model');
 const { Op } = require("sequelize");
 
@@ -12,13 +14,19 @@ const getalluser= async (req, res)=>{
 
 
 const getusersfullnameandrole =async (req,res)=>{
+    console.log("get users fullname and role api called");
     const users = await User.findAll({
-        // attributes:['fullname','role']
-        where: {
-    // id: [1, 2, 3], // Same as using `id: { [Op.in]: [1,2,3] }`
+        attributes:['fullname','role',],
+         include: [{
+           model: Contact,
+           as: 'contactInfo',
+           attributes: ['currentaddress','permanentaddress']
+         }]
+//         where: {
+//     // id: [1, 2, 3], // Same as using `id: { [Op.in]: [1,2,3] }`
 
-    id : {[Op.in]:[23,14,7]}
-  },
+//     id : {[Op.in]:[23,14,7]}
+//   },
     })
     res.send(users)
 }
@@ -50,19 +58,55 @@ const adduser= async (req,res)=>{
 
     // here we add destructuring from body and check all fileds should be there 
     const userdata = req.body;
-    // const {fullname,email,phonenumber,location,role} = req.body;
-    // if(!userdata){
-    //     console.log("missing user data");
-    //     return res.status(400).send({response:"missing user data"});
-    // }
+    const {fullname,email,phonenumber,location,role} = req.body;
+    if(!userdata){
+        console.log("missing user data");
+        return res.status(400).send({response:"missing user data"});
+    }
+   
 
-   const newuser = await User.create(userdata);
-    console.log("the new user created is :",newuser);
+    const newuser = await User.create(userdata);
+    // console.log("the new user created is :",newuser);
+   
+
+
 
     res.status(201).send({response:"user created successfully"});
 
 
 }
+
+
+// oneto one and one many both same time  association example
+const oneTomanyandoneToone = async (req,res)=>{
+    const data = req.body;
+    const userinfo = await User.create(data);
+     if(userinfo.id){
+        console.log("user created successfully with id :",userinfo.id);
+      categoryinfo =  await Category.create({
+            categoryName: data.categoryName,
+            categoryId: data.categoryId,
+            user_Id:userinfo.id
+        });
+        console.log("default category created for user id :",userinfo.id);
+    }
+   
+    if(userinfo.id){
+        console.log("user created successfully with id :",userinfo.id);
+      contactinfo =  await Contact.create({
+            currentaddress: data.currentaddress,
+            permanentaddress: data.permanentaddress,
+            user_Id:userinfo.id
+        });
+        console.log("default contact created for user id :",userinfo.id);
+    }
+
+
+
+
+    res.send(`user is created and  contact table have there contact  id  ${contactinfo.id} and  category table have there category id  ${categoryinfo.id} for  info user id is ${userinfo.id}`)
+}
+
  const updateuser = async (req,res)=>{
 
     if(!req.params.id){
@@ -109,14 +153,14 @@ const bulkcreateusers= async (req,res)=>{
 
 
 // working on this api  i have to add  relation in database one to one 
- const oneToone = async (req,res)=>{
-    const {id} = req.params;
-    const userwithcategory = await User.findByPk(id,{include:Category});
-    if(!userwithcategory){
-        return res.status(404).send({response:"user not found"});
-    }
-    res.send(userwithcategory);
- };
+//  const oneToone = async (req,res)=>{
+//     const {id} = req.params;
+//     const userwithcategory = await User.findByPk(id,{include:Category});
+//     if(!userwithcategory){
+//         return res.status(404).send({response:"user not found"});
+//     }
+//     res.send(userwithcategory);
+//  };
 
     
 
@@ -129,7 +173,7 @@ module.exports = {
     getusersfullnameandrole,
     bulkcreateusers,
     modelqueryexample,
-    oneToone
+    oneTomanyandoneToone
   
 
 };

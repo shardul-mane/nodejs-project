@@ -34,9 +34,13 @@
 // //  console.log(user==sequelize.model.user)
 
 
-const { Sequelize, DataTypes } = require('sequelize');
+const {  DataTypes } = require('sequelize');
 // const sequelize = new Sequelize('sqlite::memory:');
 const sequelize = require('../database/index.js');
+const Category = require('../model/category.model.js');
+const Contact = require('../model/contact.model.js');
+// const User = require('../model/user.model.js');
+
 
 const User = sequelize.define(
   'User',
@@ -92,6 +96,54 @@ User.sync().then(() => {
 }).catch((err) => {
   console.log("the error is :", err)
 });
+
+
+// User.associate = (models) => {
+//   User.hasOne(models.Contact, {
+//     foreignKey: 'user_Id',
+//     as: 'assotionfromuserInfo',
+//   })
+// }
+
+// Contact.associate = (models) => {
+//   Contact.belongsTo(models.User, {
+//     foreignKey: 'user_Id',
+//     as: 'assotionfromuserInfo',
+//   });
+// }
+
+User.hasOne(Contact, {
+  foreignKey: 'user_Id',
+    as: 'contactInfo'
+});
+Contact.belongsTo(User, {
+    foreignKey: 'user_Id',
+    as:"userInfo"
+});
+
+
+
+
+User.hasMany(Category, {
+  foreignKey: 'user_Id',
+    as: 'categoryInfo'
+});
+Category.belongsTo(User, {
+    foreignKey: 'user_Id',
+    as:"userInfo"
+});
+
+
+
+
+
+
+// User.associate = (models) => {
+//   User.hasMany(models.Category, {
+//     foreignKey: 'user_Id',
+//     as: 'categoryInfo',
+//   });
+// }
 
 module.exports = User;
 

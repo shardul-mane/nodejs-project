@@ -35,6 +35,9 @@ Category.init(
         }
       },
     },
+    user_Id: {
+      type: DataTypes.INTEGER
+    },
     fullcategoryNameandId: {
       type: DataTypes.VIRTUAL,
       get() {

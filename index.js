@@ -4,8 +4,10 @@ const app = express();
 const User = require('./model/user.model');
 const Category = require('./model/category.model');
 const bodyParser = require('body-parser');
-const { oneToone,getalluser, adduser, deleteuser ,updateuser,getusersfullnameandrole,getuserbyid,bulkcreateusers,modelqueryexample} = require('./controller/user.controller');
+const { oneTomanyandoneToone,getalluser, adduser, deleteuser ,updateuser,getusersfullnameandrole,getuserbyid,bulkcreateusers,modelqueryexample, oneToone1} = require('./controller/user.controller');
 const { bulkcreatecatgory,getallcategory,getcategorybyid,addcategory,deletecategory} = require('./controller/category.controller');
+const { addcontact } = require('./controller/contact.controller');
+const Contact = require('./model/contact.model');
 // const dotenv= require('dotenv');
 // dotenv.config();
 app.use(bodyParser.json());
@@ -22,52 +24,113 @@ app.get('/p', function (req,res){
    res.send("hi pp")
 });
 
+// // create contact api
 
-//  get all users
-app.get('/getalluser', getalluser);
+// app.post('/addcontact', addcontact);
 
-//test api for model query example
 
-app.get('/model', modelqueryexample);
+// //  get all users
+// app.get('/getalluser', getalluser);
 
-// get user by id
-app.get('/:id',getuserbyid);
+// //test api for model query example
+
+// app.get('/model', modelqueryexample);
+
+// // get user by id
+// app.get('/:id',getuserbyid);
 
 // app.('/adduser',adduser);
-app.post('/adduser', adduser);
+// app.post('/adduser', adduser);
 
-//delete user
-app.delete('/deleteuser/:id',deleteuser);
+// //delete user
+// app.delete('/deleteuser/:id',deleteuser);
 
-//Update data using patch method
-app.patch('/updateuser/:id',updateuser)
-// get all users fullname and role. getuserandrole
+// //Update data using patch method
+// app.patch('/updateuser/:id',updateuser)
+// // get all users fullname and role. getuserandrole
 
-app.get('/getuserandrole',getusersfullnameandrole);
+// app.get('/getuserandrole',getusersfullnameandrole);
 
 // get user by id
-app.get('/getuserbyid/:id',getuserbyid);
+// app.get('/getuserbyid/:id',getuserbyid);
 
 // Category all API HERE 
 
 //add category
-app.post('/addcategory',addcategory);
+// app.post('/addcategory',addcategory);
 
 // get category by id
-app.get('/getcategorybyid/:id',getcategorybyid);
+// app.get('/getcategorybyid/:id',getcategorybyid);
 
 //creates catgory in bulk by giveing in array 
 // app.post('/createcategoryinbulk',bulkcreatecatgory)
 
 // get all category
-app.get('/getallcategory',getallcategory);
+// app.get('/getallcategory',getallcategory);
 
 
 //delete category
-app.delete('/deletecategory/:id',deletecategory);
+// app.delete('/deletecategory/:id',deletecategory);
 
-// working on one to one association between user and category
-app.get('/userwithcategory/:id',oneToone);
+
+
+// assotions api list here
+
+
+// working on one to one  and has many also association between user and category and contacts table 
+// when hit this url i have to give all info of user and category and contact info also using single api u can make entries in three tables also and get info from three tables also
+app.post('/hasone-hasmany',oneTomanyandoneToone);
+
+app.post('/listapi',  async function (req,res){
+      const listdata =  req.body;
+      const offset = Number((listdata.page - 1) * listdata.limit);
+      const limit = Number(listdata.limit);;
+     const result = await User.findAll({
+        offset: offset,
+        limit: limit,
+        order: [['createdAt', 'asc']],
+  
+
+        attributes:['fullname','role'],
+         include: [{
+           model: Contact,
+           as: 'contactInfo',
+         //   attributes: ['categoryName','categoryId']
+         attributes: { exclude: ['createdAt', 'updatedAt','user_Id'] }
+
+         }]
+
+
+
+   //    where: {
+   //  [Op.or]: [
+   //    sequelize.where(sequelize.fn('id', sequelize.col('content')), 7),
+   //    {
+   //      content: {
+   //        [Op.like]: 'Hello%',
+   //      },
+   //    }
+   //   ] }    },
+   //   {
+   //    include: [
+   //      {
+   //        model: [Category,Contact],
+          
+   //        as: 'unserInfo',
+   //      },
+   //    ] 
+   },
+     
+   
+   )
+
+
+
+res.send(result);
+
+})
+
+
 
 
 
