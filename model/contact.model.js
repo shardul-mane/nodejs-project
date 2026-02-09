@@ -49,6 +49,7 @@
 const { DataTypes } = require('sequelize');
 // const sequelize = new Sequelize('sqlite::memory:');
 const sequelize = require('../database/index.js');
+const { FORCE } = require('sequelize/lib/index-hints');
 
 
 const Contact = sequelize.define(

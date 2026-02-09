@@ -21,7 +21,7 @@ const Sequelize = require('sequelize');
 // const temp = process.env.DATABASE_NAME;
 // console.log("the database name is :",temp);
 
-const sequelize = new Sequelize('demo','user','ac',{
+const sequelize = new Sequelize('us','user','pass',{
     host:'localhost',
     dialect:'mysql',
     logging:false,

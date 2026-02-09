@@ -80,7 +80,14 @@ const adduser= async (req,res)=>{
 // oneto one and one many both same time  association example
 const oneTomanyandoneToone = async (req,res)=>{
     const data = req.body;
-    const userinfo = await User.create(data);
+    console.log("the data received in one to one and one to many api is :",data);
+    const userinfo = await User.create({
+        fullname: data.fullname,
+        email: data.email,
+        phonenumber: data.phonenumber,
+        location: data.location,
+        role: data.role
+    });
      if(userinfo.id){
         console.log("user created successfully with id :",userinfo.id);
       categoryinfo =  await Category.create({
@@ -121,6 +128,7 @@ const oneTomanyandoneToone = async (req,res)=>{
     res.send({response:`user data updated successfully ${req.params.id}`});
  }
 const deleteuser= async(req,res)=>{
+    console.log("delete user api called with id :",req.params.id);
     if(!req.params.id){
         return res.status(400).send({response:"missing user id in params"})
     }
@@ -128,6 +136,9 @@ const deleteuser= async(req,res)=>{
         where:{
             id:req.params.id
         }
+     }).catch((err)=>{
+        console.log("the error is :",err);
+        return res.status(500).send({response:"internal server error"})
      })
      res.send({response:"user deleted sucessfully",id:req.params.id})
 }
@@ -150,6 +161,17 @@ const bulkcreateusers= async (req,res)=>{
     await User.bulkCreate(usersarray);
     res.status(201).send({response:"users created successfully in bulk"});
 }
+
+const createAssociation = async (req,res)=>{
+    const userdata = req.body;
+    awai
+
+}
+
+
+
+
+
 
 
 // working on this api  i have to add  relation in database one to one 

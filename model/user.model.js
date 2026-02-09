@@ -91,6 +91,7 @@ const User = sequelize.define(
     tableName: 'users_table',
   },
 );
+// User.
 User.sync().then(() => {
   console.log("users_table table created successfully")
 }).catch((err) => {
@@ -116,7 +117,7 @@ User.hasOne(Contact, {
   foreignKey: 'user_Id',
     as: 'contactInfo'
 });
-Contact.belongsTo(User, {
+const usercontact = Contact.belongsTo(User, {
     foreignKey: 'user_Id',
     as:"userInfo"
 });
@@ -128,7 +129,7 @@ User.hasMany(Category, {
   foreignKey: 'user_Id',
     as: 'categoryInfo'
 });
-Category.belongsTo(User, {
+ Category.belongsTo(User, {
     foreignKey: 'user_Id',
     as:"userInfo"
 });

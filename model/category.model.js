@@ -51,7 +51,9 @@ Category.init(
     // If you want to give a custom name to the deletedAt column
     deletedAt: 'destroyTime',
     // Other model options go here
-
+    // scopes: {
+      // Define a scope to filter categories by name
+      // byCategoryName(name) {
     sequelize, // We need to pass the connection instance
     modelName: 'Category', // We need to choose the model name
     tableName: 'categories', // specify the table name
