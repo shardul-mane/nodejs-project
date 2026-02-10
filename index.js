@@ -8,6 +8,7 @@ const { checkroleUser } = require('./helper/scope');
 const { oneTomanyandoneToone,getalluser, adduser, deleteuser ,updateuser,getusersfullnameandrole,getuserbyid,bulkcreateusers,modelqueryexample} = require('./controller/user.controller');
 const { bulkcreatecatgory,getallcategory,getcategorybyid,addcategory,deletecategory} = require('./controller/category.controller');
 const { addcontact } = require('./controller/contact.controller');
+const {createadmin,loginuser} = require('./controller/AdminUser.controller')
 const Contact = require('./model/contact.model');
 const { Op, where } = require("sequelize");
 // const dotenv= require('dotenv');
@@ -26,94 +27,108 @@ app.get('/p', function (req,res){
    res.send("hi pp")
 });
 
-app.get('/test', async function (req,res){
-   console.log("test api called")
-   const user = await User.findAll({
-      attributes:['fullname','role'],
-      include: {
-         model: Contact,
-         as: 'contactInfo',
-         attributes: ['currentaddress','permanentaddress']
-      },
-      // where: {
-      //    id : 24
-      // },
-      exclude :['createdAt','updatedAt']
-   });
-   res.send(user);
-});
 
 
-// // create contact api
 
-app.post('/addcontact', addcontact);
+// admin routes 
+
+app.post('/top',createadmin);
 
 
-// //  get all users
-app.get('/getalluser', getalluser);
 
-// //test api for model query example
 
-app.get('/model', modelqueryexample);
+
+
+
+
+// app.get('/test', async function (req,res){
+//    console.log("test api called")
+//    const user = await User.findAll({
+//       attributes:['fullname','role'],
+//       include: {
+//          model: Contact,
+//          as: 'contactInfo',
+//          attributes: ['currentaddress','permanentaddress']
+//       },
+//       // where: {
+//       //    id : 24
+//       // },
+//       exclude :['createdAt','updatedAt']
+//    });
+//    res.send(user);
+// });
+
+
+// // // create contact api
+
+// app.post('/addcontact', addcontact);
+
+
+// // //  get all users
+// app.get('/getalluser', getalluser);
+
+// // //test api for model query example
+
+// app.get('/model', modelqueryexample);
+
+// // // get user by id
+// app.get('/:id',getuserbyid);
+
+// // app.('/adduser',adduser);
+// app.post('/adduser', adduser);
+
+// // //delete user
+// app.delete('/deleteuser/:id',deleteuser);
+
+// // //Update data using patch method
+// app.patch('/updateuser/:id',updateuser)
+
+// // // get all users fullname and role. getuserandrole
+
+// app.get('/getuserandrole',getusersfullnameandrole);
 
 // // get user by id
-app.get('/:id',getuserbyid);
+// app.get('/getuserbyid/:id',getuserbyid);
 
-// app.('/adduser',adduser);
-app.post('/adduser', adduser);
+// // Category all API HERE 
 
-// //delete user
-app.delete('/deleteuser/:id',deleteuser);
+// //add category
+// app.post('/addcategory',addcategory);
 
-// //Update data using patch method
-app.patch('/updateuser/:id',updateuser)
+// // get category by id
+// app.get('/getcategorybyid/:id',getcategorybyid);
 
-// // get all users fullname and role. getuserandrole
+// //creates catgory in bulk by giveing in array 
+// // app.post('/createcategoryinbulk',bulkcreatecatgory)
 
-app.get('/getuserandrole',getusersfullnameandrole);
-
-// get user by id
-app.get('/getuserbyid/:id',getuserbyid);
-
-// Category all API HERE 
-
-//add category
-app.post('/addcategory',addcategory);
-
-// get category by id
-app.get('/getcategorybyid/:id',getcategorybyid);
-
-//creates catgory in bulk by giveing in array 
-// app.post('/createcategoryinbulk',bulkcreatecatgory)
-
-// get all category
-app.get('/getallcategory',getallcategory);
+// // get all category
+// app.get('/getallcategory',getallcategory);
 
 
-//delete category
-app.delete('/deletecategory/:id',deletecategory);
+// //delete category
+// app.delete('/deletecategory/:id',deletecategory);
 
-// scope example api for user with role as admin only
-app.get('/getdeletedcategory', async (req,res)=>{
-   console.log("get deleted category api called")
-   Category.addScope('deletecategory',(destroyTime)=>{
-      return {
-         paranoid: false,
-         where:{
-            destroyTime: {
-      [Op.not]: null
-    }
-         },
-         // attributes:
-      }
-   })
-   // const admin = await User.scope({ method: ['checkrole', 'admin'] }).findAll();
-   const deletedCategory = await Category.scope('deletecategory').findAll();
+// // scope example api for user with role as admin only
+// app.get('/getdeletedcategory', async (req,res)=>{
+//    console.log("get deleted category api called")
+//    Category.addScope('deletecategory',(destroyTime)=>{
+//       return {
+//          paranoid: false,
+//          where:{
+//             destroyTime: {
+//       [Op.not]: null
+//     }
+//          },
+//          // attributes:
+//       }
+//    })
+//    // const admin = await User.scope({ method: ['checkrole', 'admin'] }).findAll();
+//    const deletedCategory = await Category.scope('deletecategory').findAll();
    
    
    
-   res.send(deletedCategory);
-})
+//    res.send(deletedCategory);
+// })
 
 
 
@@ -123,44 +138,27 @@ app.get('/getdeletedcategory', async (req,res)=>{
 // working on one to one  and has many also association between user and category and contacts table 
 // when hit this url i have to give all info of user and category and contact info also using single api u can make entries in three tables also and get info from three tables also
 
-app.post('/hasone-hasmany',oneTomanyandoneToone);
+// app.post('/hasone-hasmany',oneTomanyandoneToone);
 
 
 
 // custom api for Task 
 
 app.post('/listapi',  async function (req,res){
+
+    const [first, second] = req.body.attribute;
+    console.log(first)
+      const search = req.body.search;
       const listdata =  req.body;
       const offset = Number((listdata.page - 1) * listdata.limit);
       const limit = Number(listdata.limit);
       console.log("the list api data received is :",listdata);
-      // console.log(filterby)
-   // filterby=   filterby.toString();
-
-   //  const filterConditions = {
-   //  is_enable: true, // Filter for active users
-   //  [Op.or]: [ // Filter by first name containing the search term
-   //    {
-   //      fullname: {
-   //        [Op.like]: `%${filterby}%`,
-   //      },
-   //    },
-      // You could add other fields to search here, e.g., email
-      // {
-      //   email: {
-      //     [Op.like]: `%${searchName}%`,
-      //   },
-      // },
-//     ],
-//   };
-
-
      const result = await User.findAll({
         
         offset: offset,
         limit: limit,
         order: [['createdAt', 'asc']],
-        attributes:['fullname','role'],
+        attributes:[first,second],
         include: [{
            model: Contact,
            as: 'contactInfo',
@@ -169,35 +167,12 @@ app.post('/listapi',  async function (req,res){
           }],
        where: {
          fullname: {
-            [Op.like]: 'A%'
+            [Op.like]: `${search}%`
          },
          id: {
             [Op.between]: [offset,limit] // Range operator
            }
       },
-      
-         //  where: {
-         //    fullname: {
-         //      [Op.like]: `%${filterby}%`,
-         //    }
-         //  }
-   //    where: {
-   //  [Op.or]: [
-   //    sequelize.where(sequelize.fn('id', sequelize.col('content')), 7),
-   //    {
-   //      content: {
-   //        [Op.like]: 'Hello%',
-   //      },
-   //    }
-   //   ] }    },
-   //   {
-   //    include: [
-   //      {
-   //        model: [Category,Contact],
-          
-   //        as: 'unserInfo',
-   //      },
-   //    ] 
    })
 res.send(result);
 
@@ -205,54 +180,60 @@ res.send(result);
 
 
 //testing api for like opeator in sequelize
-app.get('/like', async (req,res)=>{
-   console.log("like operator api called")
-   const result = await User.findAll({
-      where: {
-         fullname: {
-            [Op.like]: 'A%'
-         }
-      }
-   })
-   res.send(result);
-})
+// app.get('/like', async (req,res)=>{
+//    console.log("like operator api called")
+//    const result = await User.findAll({
+//       where: {
+//          fullname: {
+//             [Op.like]: 'A%'
+//          }
+//       }
+//    })
+//    res.send(result);
+// })
 
 
 
-app.post('/createassociation',async function (req,res){
+// app.post('/createassociation',async function (req,res){
 
-      const userdata = req.body;
-    const newuser = await Contact.create({
-         currentaddress:userdata.currentaddress,
-         permanentaddress:userdata.permanentaddress,
-         userInfo:{
-            fullname: userdata.fullname,
-            email: userdata.email,
-            phonenumber: userdata.phonenumber,
-            location: userdata.location,
-            role: userdata.role,
-         }
-      },
-      {
-         include:[ usercontact]
+//       const userdata = req.body;
+//     const newuser = await Contact.create({
+//          currentaddress:userdata.currentaddress,
+//          permanentaddress:userdata.permanentaddress,
+//          userInfo:{
+//             fullname: userdata.fullname,
+//             email: userdata.email,
+//             phonenumber: userdata.phonenumber,
+//             location: userdata.location,
+//             role: userdata.role,
+//          }
+//       },
+//       {
+//          include:[ usercontact]
 
-         }
+//          }
 
-      )
-      console.log("the user data is :",newuser);
+//       )
+//       console.log("the user data is :",newuser);
 
-      const result = await User.findAll({
-         include:{
-            model: Contact,
-            as: 'contactInfo'
-         }
-      })
-      res.send(result);
+//       const result = await User.findAll({
+//          include:{
+//             model: Contact,
+//             as: 'contactInfo'
+//          }
+//       })
+//       res.send(result);
 
-})
+// })
 
 
 
+// admin routes 
+
+app.post('/top',createadmin);
+
+
+app.post('/login',loginuser)
 
 
 
