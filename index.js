@@ -1,5 +1,7 @@
 require('dotenv').config();// const User = require('./model/user')
 const express = require('express');
+// const cors=require("cors")
+const cors = require('cors');
 const app = express();
 const User = require('./model/user.model');
 const Category = require('./model/category.model');
@@ -8,12 +10,28 @@ const { checkroleUser } = require('./helper/scope');
 const { oneTomanyandoneToone,getalluser, adduser, deleteuser ,updateuser,getusersfullnameandrole,getuserbyid,bulkcreateusers,modelqueryexample} = require('./controller/user.controller');
 const { bulkcreatecatgory,getallcategory,getcategorybyid,addcategory,deletecategory} = require('./controller/category.controller');
 const { addcontact } = require('./controller/contact.controller');
-const {createadmin,loginuser} = require('./controller/AdminUser.controller')
+const {createadmin,loginuser,updateadmin} = require('./controller/AdminUser.controller')
 const Contact = require('./model/contact.model');
+const {registerAccount,loginUserBank} =require('./controller/bank.controller')
 const { Op, where } = require("sequelize");
 // const dotenv= require('dotenv');
 // dotenv.config();
+
 app.use(bodyParser.json());
+// app.use(cors({
+//    origin:"*",
+//    allowedHeaders:"*"
+// }))
+
+
+const corsOptions = {
+  origin: '*', // Change to your frontend's URL
+//   methods: ['GET', 'POST'],
+  optionsSuccessStatus: 200
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 const temp = process.env.DATABASE_NAME;
 console.log("the database name in index.js is :",temp);
@@ -30,9 +48,38 @@ app.get('/p', function (req,res){
 
 
 
-// admin routes 
+/// admin routes 
 
-app.post('/top',createadmin);
+// app.post('/admin',createadmin);
+
+
+// app.post('/login',loginuser)
+
+// app.patch('/updateadmin',updateadmin)
+
+
+// Bank API
+
+app.post('/bank/register',registerAccount);
+
+
+app.post('/bank/login',loginUserBank);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -144,39 +191,39 @@ app.post('/top',createadmin);
 
 // custom api for Task 
 
-app.post('/listapi',  async function (req,res){
+// app.post('/listapi',  async function (req,res){
 
-    const [first, second] = req.body.attribute;
-    console.log(first)
-      const search = req.body.search;
-      const listdata =  req.body;
-      const offset = Number((listdata.page - 1) * listdata.limit);
-      const limit = Number(listdata.limit);
-      console.log("the list api data received is :",listdata);
-     const result = await User.findAll({
+//     const [first, second] = req.body.attribute;
+//     console.log(first)
+//       const search = req.body.search;
+//       const listdata =  req.body;
+//       const offset = Number((listdata.page - 1) * listdata.limit);
+//       const limit = Number(listdata.limit);
+//       console.log("the list api data received is :",listdata);
+//      const result = await User.findAll({
         
-        offset: offset,
-        limit: limit,
-        order: [['createdAt', 'asc']],
-        attributes:[first,second],
-        include: [{
-           model: Contact,
-           as: 'contactInfo',
-         //   attributes: ['categoryName','categoryId']
-         attributes: { exclude: ['createdAt', 'updatedAt','user_Id'] },
-          }],
-       where: {
-         fullname: {
-            [Op.like]: `${search}%`
-         },
-         id: {
-            [Op.between]: [offset,limit] // Range operator
-           }
-      },
-   })
-res.send(result);
+//         offset: offset,
+//         limit: limit,
+//         order: [['createdAt', 'asc']],
+//         attributes:[first,second],
+//         include: [{
+//            model: Contact,
+//            as: 'contactInfo',
+//          //   attributes: ['categoryName','categoryId']
+//          attributes: { exclude: ['createdAt', 'updatedAt','user_Id'] },
+//           }],
+//        where: {
+//          fullname: {
+//             [Op.like]: `${search}%`
+//          },
+//          id: {
+//             [Op.between]: [offset,limit] // Range operator
+//            }
+//       },
+//    })
+// res.send(result);
 
-})
+// })
 
 
 //testing api for like opeator in sequelize
@@ -228,12 +275,7 @@ res.send(result);
 
 
 
-// admin routes 
 
-app.post('/top',createadmin);
-
-
-app.post('/login',loginuser)
 
 
 

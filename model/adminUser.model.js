@@ -24,7 +24,7 @@ AdminUser.init({
     email:{
          type: DataTypes.STRING(100),
          allowNull:false,
-         unique:true
+        //  unique:true
     },
     password:{
         type:DataTypes.STRING(255)
@@ -34,8 +34,9 @@ AdminUser.init({
         defaultValue:'User',
     },
     token:{
-        type:DataTypes.STRING(255),
-        allowNull:true
+        type:DataTypes.TEXT,
+        defaultValue:"str"
+       
 
     },
     token_expried:{

@@ -53,9 +53,11 @@ const loginuser = async (req, res) => {
     }
   const user = await AdminUser.findOne({
       where: { 
-        email
+        email: email
      }
     });
+
+    console.log(user.first_name);
 
     if (!user) {
       return res.json({
@@ -99,21 +101,37 @@ if (!passwordMatch) {
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
+
+  console.log(user.id);
+
+  refreshToken.toString()
      
-//    await AdminUser.update({
-//     token: token
-//   },
-//   { where: { id: user.id } }
-//   );
+   await AdminUser.update({
+    token : refreshToken
+ },
+  { where: { 
+    email : req.body.email
+  } 
+}
+  );
 
+//   console.log(useris)
 
-
-
+// if (user) {
+//   user.token = refreshToken;
+//   await user.save(); 
+//   console.log("database updated for refresh token");
+// }
     console.log("JWT TOKEN:", token);
+
+    console.log("JWT  refresh TOKEN:", refreshToken);
+
+    
 
     return res.status(200).json({
       message: "Login successful",
       token
+      
     });
 
   } catch (error) {
@@ -134,6 +152,39 @@ if (!passwordMatch) {
 // }
 
 
+const updateadmin = async (req,res)=>{
+
+  const {first_name,last_name,email} = req.body;
+
+  // if(email){
+
+
+  // }
+
+  const exituser = await AdminUser.update({
+    first_name,
+    last_name
+    // email. for we have check duplicated from db  and for role that is fixed 
+  }
+
+,
+    {
+      where:{
+        email
+      }
+    }
+  );
+  //  console.log(exituser)
+  if(!exituser) {
+    res.send("user not found")
+  }
+
+  res.send("updated user successfully")
+
+
+
+}
+
 
 
 
@@ -143,5 +194,6 @@ if (!passwordMatch) {
 module.exports = {
     createadmin,
     loginuser,
+    updateadmin
 
 }
