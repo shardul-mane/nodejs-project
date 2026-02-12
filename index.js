@@ -1,6 +1,5 @@
 require('dotenv').config();// const User = require('./model/user')
 const express = require('express');
-// const cors=require("cors")
 const cors = require('cors');
 const app = express();
 const User = require('./model/user.model');
@@ -14,10 +13,16 @@ const {createadmin,loginuser,updateadmin} = require('./controller/AdminUser.cont
 const Contact = require('./model/contact.model');
 const {registerAccount,loginUserBank} =require('./controller/bank.controller')
 const { Op, where } = require("sequelize");
+const cookieParser = require('cookie-parser');
+
+
+const  userrouter = require('./routes/bank.route')
 // const dotenv= require('dotenv');
 // dotenv.config();
 
 app.use(bodyParser.json());
+app.use(cookieParser());
+
 // app.use(cors({
 //    origin:"*",
 //    allowedHeaders:"*"
@@ -38,7 +43,7 @@ console.log("the database name in index.js is :",temp);
 
 
 app.get('/', function (req,res){
-   res.send("hi from  vdsmv server ")
+   res.send("hi from  server ")
 });
 
 app.get('/p', function (req,res){
@@ -60,10 +65,11 @@ app.get('/p', function (req,res){
 
 // Bank API
 
-app.post('/bank/register',registerAccount);
+// app.post('/bank',registerAccount);
+app.use('/bank',userrouter)
 
 
-app.post('/bank/login',loginUserBank);
+// app.post('/bank/log',loginUserBank);
 
 
 

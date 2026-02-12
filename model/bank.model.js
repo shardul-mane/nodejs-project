@@ -45,6 +45,12 @@ BankAccounts.init(
     sequelize, 
     modelName: 'BankAccounts',
     tableName: 'BankAccounts_table', 
+    indexes: [
+    {
+      unique: true,
+      fields: ['email']
+    }
+  ]
   },
 );
 
