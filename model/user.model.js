@@ -1,4 +1,3 @@
-
 // // const {DataTypes} = require('sequelize');
 // const {sequelize} = require('../database/index.js');
 // const {  DataTypes } = require('sequelize');
@@ -27,23 +26,20 @@
 // {
 //     tableName: "users_table",
 
-
 // });
 
 // module.exports=User;
 // //  console.log(user==sequelize.model.user)
 
-
-const {  DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize");
 // const sequelize = new Sequelize('sqlite::memory:');
-const sequelize = require('../database/index.js');
-const Category = require('../model/category.model.js');
-const Contact = require('../model/contact.model.js');
+const sequelize = require("../database/index.js");
+const Category = require("../model/category.model.js");
+const Contact = require("../model/contact.model.js");
 // const User = require('../model/user.model.js');
 
-
 const User = sequelize.define(
-  'User',
+  "User",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -56,7 +52,7 @@ const User = sequelize.define(
       allowNull: false,
       // example of getter method
       get() {
-        const rawValue = this.getDataValue('fullname');
+        const rawValue = this.getDataValue("fullname");
         return rawValue ? rawValue.toUpperCase() : null;
       },
     },
@@ -64,7 +60,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       validate: {
         isEmail: true,
-      }
+      },
 
       // allowNull defaults to true
     },
@@ -78,26 +74,26 @@ const User = sequelize.define(
     },
     role: {
       type: DataTypes.STRING,
-      defaultValue: 'user',
+      defaultValue: "user",
     },
-
   },
   {
     paranoid: true,
 
     // If you want to give a custom name to the deletedAt column
-    deletedAt: 'destroyTime',
+    deletedAt: "destroyTime",
     // // Other model options go here
-    tableName: 'users_table',
+    tableName: "users_table",
   },
 );
 // User.
-User.sync().then(() => {
-  console.log("users_table table created successfully")
-}).catch((err) => {
-  console.log("the error is :", err)
-});
-
+User.sync()
+  .then(() => {
+    console.log("users_table table created successfully");
+  })
+  .catch((err) => {
+    console.log("the error is :", err);
+  });
 
 // User.associate = (models) => {
 //   User.hasOne(models.Contact, {
@@ -114,30 +110,22 @@ User.sync().then(() => {
 // }
 
 User.hasOne(Contact, {
-  foreignKey: 'user_Id',
-    as: 'contactInfo'
+  foreignKey: "user_Id",
+  as: "contactInfo",
 });
 const usercontact = Contact.belongsTo(User, {
-    foreignKey: 'user_Id',
-    as:"userInfo"
+  foreignKey: "user_Id",
+  as: "userInfo",
 });
-
-
-
 
 User.hasMany(Category, {
-  foreignKey: 'user_Id',
-    as: 'categoryInfo'
+  foreignKey: "user_Id",
+  as: "categoryInfo",
 });
- Category.belongsTo(User, {
-    foreignKey: 'user_Id',
-    as:"userInfo"
+Category.belongsTo(User, {
+  foreignKey: "user_Id",
+  as: "userInfo",
 });
-
-
-
-
-
 
 // User.associate = (models) => {
 //   User.hasMany(models.Category, {
@@ -150,5 +138,3 @@ module.exports = User;
 
 // // `sequelize.define` also returns the model
 // console.log(User === sequelize.models.User); // true
-
-

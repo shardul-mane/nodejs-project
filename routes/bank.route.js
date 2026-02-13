@@ -1,55 +1,48 @@
+const {
+  registerAccount,
+  loginUserBank,
+  getaccountbyId,
+  getAllAccounts,
+  logoutUserBank,
+  deleteAccount,
+  depositmoney,
+  sendMoney,
+  updatedUserProfile,
+} = require("../controller/bank.controller");
+const _ = require("lodash");
 
+const express = require("express");
+const router = express.Router();
+const { JwtVerify, adminOnly } = require("../middleware/authBank.middleware");
+const BankAccounts = require("../model/bank.model");
+const  validate = require('../middleware/userValidation.middleware')
+const userSchemaValidation= require('../validation/user.Validation.Schema')
+router.post("/register", validate(userSchemaValidation),registerAccount);
 
-const { registerAccount,
-       loginUserBank,
-     getaccountbyId,
-getAllAccounts,
-logoutUserBank,
-deleteAccount,
-depositmoney,
-sendMoney,
-updatedUserProfile} = require('../controller/bank.controller')
-const _ = require('lodash');
+router.post("/login", loginUserBank);
 
+router.get("/getallaccount", JwtVerify, adminOnly, getAllAccounts);
 
-const  express = require('express')
-const router = express.Router(); 
-const {JwtVerify,adminOnly} = require('../middleware/authBank.middleware');
-const BankAccounts = require('../model/bank.model');
+router.get("/getaccountbyId/:account_id", JwtVerify, adminOnly, getaccountbyId);
 
+router.post("/updatedUserProfile", JwtVerify, adminOnly, updatedUserProfile);
 
-router.post('/register', registerAccount);
+router.post("/logout", logoutUserBank);
 
-router.post('/login', loginUserBank);
+router.post("/deleteAccount/:account_id", JwtVerify, adminOnly, deleteAccount);
 
-router.get('/getallaccount',JwtVerify,adminOnly,getAllAccounts);
+router.post("/depositmoney", JwtVerify, adminOnly, depositmoney);
 
-router.get('/getaccountbyId/:account_id',JwtVerify,adminOnly,getaccountbyId);
-
-router.post('/updatedUserProfile',JwtVerify,adminOnly,updatedUserProfile);
-
-
-router.post('/logout', logoutUserBank);
-
-
-
-router.post('/deleteAccount/:account_id',JwtVerify,adminOnly,deleteAccount);
-
-router.post('/depositmoney',JwtVerify,adminOnly,depositmoney);
-
-router.post('/sendmoney',JwtVerify,sendMoney);
+router.post("/sendmoney", JwtVerify, sendMoney);
 
 // sendMoney
 
+router.get("/profile", async (req, res) => {
+  const users = await BankAccounts.findAll();
 
+  const safeUser = _.map(users, (user) => _.omit(user, ["password"]));
 
-// router.get('/profile', async (req, res) => {
-//   const users = await BankAccounts.findAll()
+  res.json(safeUser);
+});
 
-//   const safeUser = _.map(users, (user)=> _.omit(user,['password']))
-
-//   res.json(safeUser)
-// })
-
-
-module.exports = router; 
+module.exports = router;

@@ -4,15 +4,8 @@
 // const CategoryA = require('../model/category.model.js');
 // const UserA = require('../model/user.model.js');
 
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 // const dotenv = require('dotenv');
-
-
-
-
-
-
-
 
 // const sequelize = new Sequelize(process.env.DATABASE_NAME,process.env.DATABASE_USER,process.env.DATABASE_PASSWORD,{
 //     host:process.env.localhost,
@@ -20,8 +13,6 @@ const Sequelize = require('sequelize');
 // });
 // const temp = process.env.DATABASE_NAME;
 // console.log("the database name is :",temp);
-
-
 
 // const sequelize = new Sequelize(
 //   process.env.DB_NAME,
@@ -34,28 +25,22 @@ const Sequelize = require('sequelize');
 //   }
 // );
 
-
-const sequelize = new Sequelize('db','user','pass',{
-    host:'localhost',
-    dialect:'mysql',
-    logging:false,
+const sequelize = new Sequelize("dbname", "ruser", "pass", {
+  host: "localhost",
+  dialect: "mysql",
+  logging: false,
 });
 
-
-async function connection(){
-try {
-
-      await sequelize.authenticate();
+async function connection() {
+  try {
+    await sequelize.authenticate();
     //  console.log(result)
-    console.log("database is connected successfully")
-    
-} catch (error) {
-    console.log("the error is :",error)
-    
-}
+    console.log("database is connected successfully");
+  } catch (error) {
+    console.log("the error is :", error);
+  }
 }
 connection();
-
 
 // associations example of one to one association between user and contact model
 
@@ -70,6 +55,5 @@ connection();
 //     foreignKey: 'user_Id',
 //     as:"userpp"
 // });
-
 
 module.exports = sequelize;

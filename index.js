@@ -17,6 +17,7 @@ const cookieParser = require('cookie-parser');
 
 
 const  userrouter = require('./routes/bank.route')
+const cardrouter = require('./routes/cards.route')
 // const dotenv= require('dotenv');
 // dotenv.config();
 
@@ -43,11 +44,17 @@ console.log("the database name in index.js is :",temp);
 
 
 app.get('/', function (req,res){
-   res.send("hi from  server ")
+
+  // const secureUUID = crypto.randomUUID();
+  // // return secureUUID;
+    return res.send("welcome to server ")
 });
 
 app.get('/p', function (req,res){
-   res.send("hi pp")
+  //  res.send("hi pp")
+  const  secureUUID =  crypto.randomUUID().replace(/-/g, '').substring(0, 5);
+  // return secureUUID;
+   return res.send(secureUUID)
 });
 
 
@@ -66,7 +73,11 @@ app.get('/p', function (req,res){
 // Bank API
 
 // app.post('/bank',registerAccount);
+
+
+app.use('/cards',cardrouter)
 app.use('/bank',userrouter)
+
 
 
 // app.post('/bank/log',loginUserBank);
